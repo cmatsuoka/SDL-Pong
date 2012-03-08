@@ -1,0 +1,10 @@
+Simple Pong game written in C++/SDL. Should compile under Linux with minimal changes.
+
+Control Player 1 (left paddle) with W and S. Control Player 2 (right paddle) with Up and Down arrows.
+
+You can make either player a (dumb) bot by setting the isCpu flag in their constructors to true.
+
+The game was made for 800x600, but can be changed easily to run under different resolutions, though 
+paddle and ball speeds should be adjusted accordingly.
+
+You need to SDL and SDL_ttf libraries to run this game.
