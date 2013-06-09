@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <xmp.h>
 
-int windowX = 800, windowY = 600, bpp = 32;
+int windowX = 640, windowY = 480, bpp = 32;
 bool fullscreen = false;
 Keyboard keyboard;
 
@@ -54,24 +54,40 @@ int sound_init(int sampling_rate, int channels)
 		return -1;
 	}
 
+	ctx = xmp_create_context();
+	if (ctx == NULL)
+		return 1;
+
+	xmp_load_module(ctx, (char *)"music.mod");
+	xmp_sfx_samples(ctx, 2);
+	xmp_sfx_channels(ctx, 1);
+	xmp_sfx_load_sample(ctx, 0, (char *)"blip.wav");
+	xmp_start_player(ctx, 44100, 0);
+	xmp_set_player(ctx, XMP_PLAYER_VOLUME, 40);
+
 	return 0;
 }
 
 void sound_deinit()
 {
+	xmp_end_player(ctx);
+	xmp_release_module(ctx);
+	xmp_free_context(ctx);
+
 	SDL_CloseAudio();
 }
 
 void play_blip(int pan)
 {
-    xmp_sfx_channel_pan(ctx, 0, pan);
-    xmp_sfx_play_instrument(ctx, 5, 82, 64, 0);
+	xmp_sfx_channel_pan(ctx, 0, pan);
+	//xmp_sfx_play_instrument(ctx, 4, 82, 64, 0);
+	xmp_sfx_play_sample(ctx, 0, 64, 0);
 }
 
 void play_blop(int pan)
 {
-    xmp_sfx_channel_pan(ctx, 0, pan);
-    xmp_sfx_play_instrument(ctx, 5, 70, 64, 0);
+	xmp_sfx_channel_pan(ctx, 0, pan);
+	xmp_sfx_play_instrument(ctx, 4, 70, 64, 0);
 }
 
 
@@ -246,15 +262,6 @@ int main(int argc, char *argv[])
     if (sound_init(44100, 2) < 0)
         return 1;
 
-    ctx = xmp_create_context();
-    if (ctx == NULL)
-	return 1;
-
-    xmp_load_module(ctx, (char *)"music.mod");
-    xmp_sfx_channels(ctx, 1);
-    xmp_start_player(ctx, 44100, 0);
-    xmp_set_player(ctx, XMP_PLAYER_VOLUME, 40);
-
     if (fullscreen)
     {
         if (!(screen = SDL_SetVideoMode(windowX, windowY, bpp, SDL_SWSURFACE | SDL_FULLSCREEN )))
@@ -312,9 +319,6 @@ int main(int argc, char *argv[])
     }
 
     SDL_PauseAudio(1);
-    xmp_end_player(ctx);
-    xmp_release_module(ctx);
-    xmp_free_context(ctx);
 
     SDL_FreeSurface(screen);
     SDL_FreeSurface(player1ScoreSurface);
