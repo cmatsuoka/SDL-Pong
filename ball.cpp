@@ -1,4 +1,7 @@
+#include <xmp.h>
 #include "ball.h"
+
+extern xmp_context ctx;
 
 Ball::Ball(float x, float y, float w, float h)
 {
@@ -73,6 +76,8 @@ void Ball::BounceX()
     }
     else
         velX = 0 - velX;
+
+    xmp_sfx_play_instrument(ctx, 5, 82, 64, 0);
 }
 
 void Ball::BounceY()
@@ -84,6 +89,8 @@ void Ball::BounceY()
     }
     else
         velY = 0 - velY;
+
+    xmp_sfx_play_instrument(ctx, 5, 70, 64, 0);
 }
 
 void Ball::Draw(SDL_Surface* surf)

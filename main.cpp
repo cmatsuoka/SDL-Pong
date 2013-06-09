@@ -4,6 +4,7 @@
 #include "paddle.h"
 #include "ball.h"
 #include <cstdlib>
+#include <xmp.h>
 
 int windowX = 800, windowY = 600, bpp = 32;
 bool fullscreen = false;
@@ -18,6 +19,7 @@ char player1ScoreStringBuffer[4];
 char player2ScoreStringBuffer[4];
 int player1Score = 0;
 int player2Score = 0;
+xmp_context ctx;
 
 Paddle* player1;
 Paddle* player2;
@@ -25,6 +27,45 @@ Ball* ball;
 
 TTF_Font *font = NULL;
 SDL_Color textColor = {182, 230, 29};
+
+
+/*
+ * Sound
+ */
+
+static void fill_audio(void *udata, unsigned char *stream, int len)
+{
+	xmp_play_buffer(ctx, stream, len, 0);
+}
+
+int sound_init(int sampling_rate, int channels)
+{
+	SDL_AudioSpec a;
+
+	a.freq = sampling_rate;
+	a.format = (AUDIO_S16);
+	a.channels = channels;
+	a.samples = 2048;
+	a.callback = fill_audio;
+	a.userdata = NULL;
+
+	if (SDL_OpenAudio(&a, NULL) < 0) {
+		fprintf(stderr, "%s\n", SDL_GetError());
+		return -1;
+	}
+
+	return 0;
+}
+
+void sound_deinit()
+{
+	SDL_CloseAudio();
+}
+
+
+/*
+ * Screen
+ */
 
 void Update()
 {
@@ -184,6 +225,18 @@ int main(int argc, char *argv[])
     //initialize everything SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) return 1;
 
+    if (sound_init(44100, 2) < 0)
+        return 1;
+
+    ctx = xmp_create_context();
+    if (ctx == NULL)
+	return 1;
+
+    xmp_load_module(ctx, (char *)"music.mod");
+    xmp_sfx_channels(ctx, 1);
+    xmp_start_player(ctx, 44100, 0);
+    xmp_set_player(ctx, XMP_PLAYER_VOLUME, 40);
+
     if (fullscreen)
     {
         if (!(screen = SDL_SetVideoMode(windowX, windowY, bpp, SDL_SWSURFACE | SDL_FULLSCREEN )))
@@ -225,6 +278,8 @@ int main(int argc, char *argv[])
 
     SDL_WM_SetCaption("Yay, Pong", NULL);
 
+    SDL_PauseAudio(0);
+
     //game loop
     SDL_Event event;
     while (input())
@@ -238,11 +293,19 @@ int main(int argc, char *argv[])
         }
     }
 
+    SDL_PauseAudio(1);
+    xmp_end_player(ctx);
+    xmp_release_module(ctx);
+    xmp_free_context(ctx);
+
     SDL_FreeSurface(screen);
     SDL_FreeSurface(player1ScoreSurface);
     SDL_FreeSurface(player2ScoreSurface);
     TTF_CloseFont(font);
     TTF_Quit();
+
+    sound_deinit();
+
     SDL_Quit();
     return 0;
 }

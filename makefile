@@ -1,9 +1,11 @@
 CC=g++
 CFLAGS=-O3 -Wall -Werror
 OBJECTS=keyboard.o paddle.o ball.o
-LIBS = -lmingw32 -lSDLmain -lSDL_ttf -lSDL 
+#LIBS = -lmingw32 -lSDLmain -lSDL_ttf -lSDL
+LIBS = -lSDL_ttf -lSDL -lxmp
 
 all:    pong
+
 pong:  $(OBJECTS) 
 	$(CC) main.cpp $(OBJECTS) $(LIBS) $(CFLAGS) -o pong
         
@@ -17,4 +19,4 @@ keyboard.o: keyboard.cpp
 	$(CC) -c keyboard.cpp $(CFLAGS)
 	
 clean:
-	del *.o pong.exe
+	rm -f *.o pong
