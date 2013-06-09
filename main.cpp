@@ -62,6 +62,18 @@ void sound_deinit()
 	SDL_CloseAudio();
 }
 
+void play_blip(int pan)
+{
+    xmp_sfx_channel_pan(ctx, 0, pan);
+    xmp_sfx_play_instrument(ctx, 5, 82, 64, 0);
+}
+
+void play_blop(int pan)
+{
+    xmp_sfx_channel_pan(ctx, 0, pan);
+    xmp_sfx_play_instrument(ctx, 5, 70, 64, 0);
+}
+
 
 /*
  * Screen
@@ -97,6 +109,7 @@ void Update()
             {
                 ball->BounceX();
             }
+	    play_blip(255 * ball->GetX() / windowX);
         }
         else
         {
@@ -110,8 +123,10 @@ void Update()
                 {
                     ball->BounceX();
                 }
+	        play_blip(255 * ball->GetX() / windowX);
             }
         }
+
     }
 
     //player 2 ball collision
@@ -127,6 +142,7 @@ void Update()
             {
                 ball->BounceX();
             }
+	    play_blip(255 * ball->GetX() / windowX);
         }
         else
         {
@@ -140,6 +156,7 @@ void Update()
                 {
                     ball->BounceX();
                 }
+	        play_blip(255 * ball->GetX() / windowX);
             }
         }
     }
@@ -148,6 +165,7 @@ void Update()
     if (ball->GetY() < 0 || ball->GetY() > windowY - ball->GetHeight())
     {
         ball->BounceY();
+	play_blop(255 * ball->GetX() / windowX);
     }
 
     //ball collision with goals
