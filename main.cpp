@@ -71,6 +71,7 @@ void sound_deinit()
 {
 	xmp_end_player(ctx);
 	xmp_release_module(ctx);
+	xmp_sfx_deinit(ctx);
 	xmp_free_context(ctx);
 
 	SDL_CloseAudio();
