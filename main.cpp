@@ -61,6 +61,7 @@ int sound_init(int sampling_rate, int channels)
 	xmp_load_module(ctx, (char *)"music.mod");
 	xmp_sfx_init(ctx, 1, 2);
 	xmp_sfx_load_sample(ctx, 0, (char *)"blip.wav");
+	xmp_sfx_load_sample(ctx, 1, (char *)"buzz.wav");
 	xmp_start_player(ctx, 44100, 0);
 	xmp_set_player(ctx, XMP_PLAYER_VOLUME, 40);
 
@@ -81,7 +82,6 @@ void play_blip(int pan)
 {
 	SDL_LockAudio();
 	xmp_sfx_channel_pan(ctx, 0, pan);
-	//xmp_sfx_play_instrument(ctx, 4, 82, 64, 0);
 	xmp_sfx_play_sample(ctx, 0, 64, 0);
 	SDL_UnlockAudio();
 }
@@ -91,6 +91,14 @@ void play_blop(int pan)
 	SDL_LockAudio();
 	xmp_sfx_channel_pan(ctx, 0, pan);
 	xmp_sfx_play_instrument(ctx, 4, 70, 64, 0);
+	SDL_UnlockAudio();
+}
+
+void play_buzz(int pan)
+{
+	SDL_LockAudio();
+	xmp_sfx_channel_pan(ctx, 0, pan);
+	xmp_sfx_play_sample(ctx, 1, 64, 0);
 	SDL_UnlockAudio();
 }
 
@@ -195,6 +203,7 @@ void Update()
         player2Score++;
         sprintf(player2ScoreStringBuffer,"%d", player2Score);
         player2ScoreSurface = TTF_RenderText_Solid(font, player2ScoreStringBuffer, textColor);
+	play_buzz(0);
     }
     if (ball->GetX() > windowX - ball->GetWidth())
     {
@@ -202,6 +211,7 @@ void Update()
         player1Score++;
         sprintf(player1ScoreStringBuffer,"%d", player1Score);
         player1ScoreSurface = TTF_RenderText_Solid(font, player1ScoreStringBuffer, textColor);
+	play_buzz(255);
     }
 
     ball->Update();
