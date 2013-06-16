@@ -98,7 +98,7 @@ void play_buzz(int pan)
 {
 	SDL_LockAudio();
 	xmp_sfx_channel_pan(ctx, 0, pan);
-	xmp_sfx_play_sample(ctx, 1, 60, 64, 0);
+	xmp_sfx_play_sample(ctx, 1, 56, 64, 0);
 	SDL_UnlockAudio();
 }
 
