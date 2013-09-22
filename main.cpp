@@ -59,9 +59,9 @@ int sound_init(int sampling_rate, int channels)
 		return 1;
 
 	xmp_load_module(ctx, (char *)"music.mod");
-	xmp_sfx_init(ctx, 1, 2);
-	xmp_sfx_load_sample(ctx, 0, (char *)"blip.wav");
-	xmp_sfx_load_sample(ctx, 1, (char *)"buzz.wav");
+	xmp_start_smix(ctx, 1, 2);
+	xmp_smix_load_sample(ctx, 0, (char *)"blip.wav");
+	xmp_smix_load_sample(ctx, 1, (char *)"buzz.wav");
 	xmp_start_player(ctx, 44100, 0);
 	xmp_set_player(ctx, XMP_PLAYER_VOLUME, 40);
 
@@ -71,8 +71,8 @@ int sound_init(int sampling_rate, int channels)
 void sound_deinit()
 {
 	xmp_end_player(ctx);
+	xmp_end_smix(ctx);
 	xmp_release_module(ctx);
-	xmp_sfx_deinit(ctx);
 	xmp_free_context(ctx);
 
 	SDL_CloseAudio();
@@ -81,24 +81,24 @@ void sound_deinit()
 void play_blip(int pan)
 {
 	SDL_LockAudio();
-	xmp_sfx_channel_pan(ctx, 0, pan);
-	xmp_sfx_play_sample(ctx, 0, 60, 64, 0);
+	xmp_smix_channel_pan(ctx, 0, pan);
+	xmp_smix_play_sample(ctx, 0, 60, 64, 0);
 	SDL_UnlockAudio();
 }
 
 void play_blop(int pan)
 {
 	SDL_LockAudio();
-	xmp_sfx_channel_pan(ctx, 0, pan);
-	xmp_sfx_play_instrument(ctx, 4, 70, 64, 0);
+	xmp_smix_channel_pan(ctx, 0, pan);
+	xmp_smix_play_instrument(ctx, 4, 70, 64, 0);
 	SDL_UnlockAudio();
 }
 
 void play_buzz(int pan)
 {
 	SDL_LockAudio();
-	xmp_sfx_channel_pan(ctx, 0, pan);
-	xmp_sfx_play_sample(ctx, 1, 56, 64, 0);
+	xmp_smix_channel_pan(ctx, 0, pan);
+	xmp_smix_play_sample(ctx, 1, 56, 64, 0);
 	SDL_UnlockAudio();
 }
 
